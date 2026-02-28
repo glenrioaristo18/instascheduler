@@ -81,6 +81,45 @@ Tambahkan Environment Variables berikut di Vercel:
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | Seluruh isi file JSON Service Account |
 | `SPREADSHEET_ID` | ID Spreadsheet utama Anda |
 | `CRON_SECRET` | (Opsional) Secret key untuk mengamankan endpoint cron |
+| `WEBHOOK_SECRET` | Secret key untuk mengotentikasi request webhook manual |
+
+---
+
+## 🪝 Webhooks
+
+Instascheduler menyediakan webhook untuk membuat atau menjadwalkan post dari sistem eksternal (misalnya n8n, Zapier, Make, atau script internal).
+
+**Endpoint:** `POST /api/webhooks/manual`
+
+**Headers:**
+- `Content-Type`: `application/json`
+- `Authorization`: `Bearer <WEBHOOK_SECRET>`
+
+**Payload (JSON):**
+```json
+{
+  "profileId": "ID_PROFIL_DARI_SPREADSHEET",
+  "action": "schedule", // Gunakan "publish" untuk posting langsung, atau "schedule" untuk masuk ke antrean
+  "date": "2024-12-31", // Format YYYY-MM-DD
+  "time": "12:00",
+  "theme": "Theme post",
+  "title": "Judul Post",
+  "caption": "Caption post Instagram #hashtag",
+  "script": "Script deskripsi internal",
+  "cta": "Call to action",
+  "mediaUrls": [
+    "https://url-gambar-atau-video.com/file.jpg"
+  ]
+}
+```
+
+### Testing Webhook
+Untuk mencoba webhook dari komputer lokal tanpa menggunakan Zapier/n8n, gunakan script yang sudah disediakan:
+1. Pastikan Anda memiliki variabel `WEBHOOK_SECRET` pada file `.env`.
+2. Buka `test-webhook.ts`, edit `testProfileId` agar sesuai dengan ID profil di Spreadsheet.
+3. Ubah `isLocal` menjadi `true` atau `false` sesuai dengan target endpoint (lokal atau live Vercel).
+4. Pastikan dev server berjalan (`npm run dev`) jika mengetes di lokal.
+5. Jalankan perintah terminal: `npx tsx test-webhook.ts`.
 
 ---
 
